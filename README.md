@@ -46,6 +46,35 @@ The repository is automatically backed up through GitHub Actions:
 
 The GitHub Actions workflow can be found in `.github/workflows/automated-backup.yml`
 
+### GitHub CLI Integration
+
+This project uses GitHub CLI for streamlined GitHub operations:
+
+1. Ensure GitHub CLI is installed:
+   ```
+   # Check if GitHub CLI is installed
+   gh --version
+   
+   # Install GitHub CLI if needed (via winget)
+   winget install GitHub.cli
+   ```
+
+2. Authenticate with your GitHub account:
+   ```
+   gh auth login
+   ```
+
+3. Create a repository and push your code with a single command:
+   ```
+   gh repo create Warpedspeed --public --source=. --push
+   ```
+
+4. Configure automated backups:
+   ```
+   # Run the backup script manually
+   powershell -ExecutionPolicy Bypass -File scripts\auto-backup.ps1
+   ```
+
 ### Local Configuration
 
 To set up automatic backups on your local machine:
@@ -56,13 +85,7 @@ To set up automatic backups on your local machine:
    git config --global user.email "your.email@example.com"
    ```
 
-2. Run the backup script manually:
-   ```
-   cd scripts
-   .\auto-backup.ps1
-   ```
-
-3. The script will create a scheduled task for regular backups
+2. The auto-backup script will automatically create a scheduled task for daily backups
 
 ## Development Rules
 
@@ -77,7 +100,11 @@ See [Cursor Rules Implementation](docs/CURSOR_RULES_IMPLEMENTATION.md) for detai
 
 ## Getting Started
 
-1. Clone this repository
+1. Clone this repository:
+   ```
+   gh repo clone Skeptic1222/Warpedspeed
+   ```
+   
 2. Review the documentation in `docs/`
 3. Set up the required databases (see [DATABASE.md](docs/DATABASE.md))
 4. Follow the development workflow in [DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md)

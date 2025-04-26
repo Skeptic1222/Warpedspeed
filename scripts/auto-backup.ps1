@@ -1,5 +1,5 @@
 # Warped Speed Auto-Backup Script
-# This script performs automatic backups to GitHub
+# This script performs automatic backups to GitHub using GitHub CLI
 
 # Configuration
 $backupFrequency = "daily" # Options: hourly, daily, weekly
@@ -16,20 +16,25 @@ Set-Location $repoRoot
 $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
 $dateOnly = Get-Date -Format "yyyy-MM-dd"
 
-# Configure Git if needed
-git config --get user.name > $null
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Git username not configured. Please run:"
-    Write-Host "git config --global user.name 'Your Name'"
-    Write-Host "git config --global user.email 'your.email@example.com'"
+# Check for GitHub CLI
+try {
+    $ghVersion = gh --version
+    Write-Host "Using GitHub CLI: $ghVersion"
+} catch {
+    Write-Host "GitHub CLI not found. Please install it with: winget install GitHub.cli"
+    Write-Host "Then authenticate with: gh auth login"
+    exit 1
+}
+
+# Verify GitHub CLI authentication
+$authStatus = gh auth status 2>&1
+if ($authStatus -match "not logged") {
+    Write-Host "Not logged in to GitHub. Please run: gh auth login"
     exit 1
 }
 
 # Make sure we're on the main branch
-git checkout main
-
-# Pull latest changes
-git pull
+gh repo sync
 
 # Create a backup directory if it doesn't exist
 $backupDir = ".\.backup-reports"
@@ -41,7 +46,7 @@ if (-not (Test-Path $backupDir)) {
 $reportFile = "$backupDir\backup-$dateOnly.md"
 Set-Content -Path $reportFile -Value "# Backup Report: $dateOnly`n"
 Add-Content -Path $reportFile -Value "## Files Included`n```"
-Get-ChildItem -Path $repoRoot -Recurse -File -Exclude ".*" | ForEach-Object { $_.FullName.Replace($repoRoot, '').TrimStart('\') } | Sort-Object | Add-Content -Path $reportFile
+Get-ChildItem -Path $repoRoot -Recurse -File -Exclude ".*" | ForEach-Object { $_.FullName.Replace($repoRoot, "").TrimStart("\") } | Sort-Object | Add-Content -Path $reportFile
 Add-Content -Path $reportFile -Value "````n"
 Add-Content -Path $reportFile -Value "## Git Status`n```"
 git log -n 10 --pretty=format:"%h - %an, %ar : %s" | Add-Content -Path $reportFile
@@ -57,7 +62,8 @@ if ($createBranch) {
     git checkout -b $branchName
     
     if ($pushToRemote) {
-        git push -u origin $branchName
+        # Push the branch using GitHub CLI
+        gh repo sync
     }
     
     # Return to main branch
@@ -70,13 +76,14 @@ if ($createTag) {
     git tag $tagName
     
     if ($pushToRemote) {
-        git push origin $tagName
+        # Push the tag using GitHub CLI
+        gh repo sync
     }
 }
 
 # Push changes to main
 if ($pushToRemote) {
-    git push
+    gh repo sync
 }
 
 Write-Host "Backup completed successfully: $timestamp"
@@ -87,7 +94,7 @@ $taskExists = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinu
 
 # Only create the task if it doesn't exist already
 if (-not $taskExists) {
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-File `"$scriptPath\auto-backup.ps1`""
+    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-ExecutionPolicy Bypass -File `"$scriptPath\auto-backup.ps1`""
     
     switch ($backupFrequency) {
         "hourly" {

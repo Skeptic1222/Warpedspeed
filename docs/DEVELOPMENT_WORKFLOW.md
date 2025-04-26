@@ -420,6 +420,94 @@ test('user can create a character', async ({ page }) => {
    - Collect feedback from team members
    - Implement improvements incrementally
 
+## GitHub CLI Integration
+
+This project leverages GitHub CLI for streamlined GitHub operations.
+
+## Setting Up GitHub CLI
+
+1. Install GitHub CLI:
+   ```
+   winget install GitHub.cli
+   ```
+
+2. Authenticate with your GitHub account:
+   ```
+   gh auth login
+   ```
+
+3. Verify successful authentication:
+   ```
+   gh auth status
+   ```
+
+## Common GitHub CLI Commands
+
+### Repository Operations
+
+- Clone this repository:
+  ```
+  gh repo clone Skeptic1222/Warpedspeed
+  ```
+
+- Create a new repository:
+  ```
+  gh repo create [name] --public --source=. --push
+  ```
+
+- View repository information:
+  ```
+  gh repo view
+  ```
+
+### Issue Management
+
+- List issues:
+  ```
+  gh issue list
+  ```
+
+- Create a new issue:
+  ```
+  gh issue create --title "Issue title" --body "Issue description"
+  ```
+
+- Close an issue:
+  ```
+  gh issue close [issue-number]
+  ```
+
+### Pull Request Workflow
+
+- Create a pull request:
+  ```
+  gh pr create --title "PR title" --body "PR description"
+  ```
+
+- List pull requests:
+  ```
+  gh pr list
+  ```
+
+- Check out a pull request locally:
+  ```
+  gh pr checkout [pr-number]
+  ```
+
+### Automated Backup
+
+- Run backup manually:
+  ```
+  gh workflow run automated-backup.yml
+  ```
+
+- View workflow runs:
+  ```
+  gh run list --workflow=automated-backup.yml
+  ```
+
+For more information on GitHub CLI, see the [official documentation](https://cli.github.com/manual/).
+
 ## Conclusion
 
 Following this development workflow will ensure a consistent, high-quality codebase for the Warped Speed project. The emphasis on database-driven development, comprehensive testing, and code quality will create a maintainable and extensible foundation for the game.
