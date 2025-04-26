@@ -1,0 +1,389 @@
+// Warped Speed - Complete .cursorrules Configuration
+// Version 2.5 - Generated based on project specifications
+
+{
+  "version": "2.5",
+  "description": "Comprehensive rules for Warped Speed development",
+
+  // ==================================================================
+  // Core Project Documentation and Reference
+  // ==================================================================
+  "priority_docs": [
+    "../warped.md",         // Root-level master instructions
+    "docs/MASTER.md",       // Master documentation
+    "docs/BUGS_PROGRESS.md", // Bug tracking and progress
+    "docs/WHITEPAPER.md",   // Project whitepaper
+    "docs/FEATURES.md",     // Feature documentation
+    "docs/ROADMAP.md",      // Development roadmap
+    "docs/PROMPTS.md",      // Prompt design
+    "docs/MECHANICS.md",    // Game mechanics
+    "docs/LORE.md",         // Game lore and world-building
+    "docs/CURSOR_TODO.md",  // ToDo list for development
+    "docs/DATABASE.md",     // Database documentation
+    "docs/ARCHITECTURE.md", // Architecture overview
+    "docs/API_INTEGRATION.md", // API integration
+    "docs/UI_SPEC.md",      // UI specifications
+    "docs/DEVELOPMENT_WORKFLOW.md", // Development process
+    "docs/DATABASE_SCHEMA.md", // Database schema
+    "docs/PROMPT_TEMPLATES.md", // Prompt templates
+    "docs/IMAGES.md",       // Image generation guidelines
+    "docs/PROMPTING.md"     // Prompting guidelines
+  ],
+
+  // ==================================================================
+  // Code Structure Rules
+  // ==================================================================
+  "structure": {
+    "enforced_directories": [
+      "src/modules/",    // Feature modules
+      "src/components/", // UI components
+      "src/services/",   // Business logic
+      "src/hooks/",      // React hooks
+      "src/utils/",      // Utility functions
+      "src/types/",      // TypeScript type definitions
+      "src/context/",    // React context providers
+      "src/styles/",     // CSS modules
+      "db/",             // Database schema and migrations
+      "assets/",         // Static assets
+      "docs/",           // Documentation
+      "tests/",          // Test files
+      "scripts/"         // Utility scripts
+    ],
+    "file_size_limits": {
+      "max_lines": 300,
+      "max_code_lines": 250,
+      "warning_threshold": 200,
+      "error_message": "File exceeds line limit of 300 lines. Split into multiple logical modules."
+    },
+    "modularity": {
+      "enforce_feature_modules": true,
+      "max_dependencies_per_file": 15,
+      "max_exports_per_file": 10,
+      "encourage_single_responsibility": true
+    }
+  },
+
+  // ==================================================================
+  // Database-First Architecture Rules
+  // ==================================================================
+  "database": {
+    "enforce_databases": [
+      "ImageAssetsDB",
+      "GameContentDB",
+      "PlayerDataDB",
+      "NPCDataDB", 
+      "SystemSettingsDB"
+    ],
+    "migration_rules": {
+      "require_migrations": true,
+      "preserve_data": true,
+      "backup_before_migration": true,
+      "test_migrations": true
+    },
+    "content_rules": {
+      "no_hardcoded_content": true,
+      "data_driven_only": true,
+      "prompt_templates_in_db": true,
+      "config_in_db": true
+    }
+  },
+
+  // ==================================================================
+  // Code Quality Rules
+  // ==================================================================
+  "code_quality": {
+    "naming": {
+      "enforce_descriptive_names": true,
+      "enforce_camel_case": true,
+      "min_name_length": 2,
+      "max_name_length": 40,
+      "banned_names": ["temp", "foo", "bar", "x", "y", "z"]
+    },
+    "comments": {
+      "require_file_headers": true,
+      "require_function_comments": true,
+      "require_class_comments": true,
+      "enforce_jsdoc_style": true,
+      "header_template": "/**\n * @file {filename}\n * @description {description}\n * @author Warped Speed Team\n * @created {date}\n */"
+    },
+    "testing": {
+      "require_unit_tests": true,
+      "minimum_coverage": 80,
+      "enforce_test_naming": true,
+      "test_file_pattern": "*.test.{js,ts,tsx}"
+    }
+  },
+
+  // ==================================================================
+  // Phase Development Controls
+  // ==================================================================
+  "phases": {
+    "current_phase": 1,
+    "enforce_completion_before_progressing": true,
+    "phase_definitions": {
+      "1": {
+        "description": "Core Text-Based Gameplay",
+        "features": [
+          "Database-driven text adventure",
+          "Action buttons (green, yellow, orange, red, blue)",
+          "GPT-powered narrative generation",
+          "Basic player interaction",
+          "Text-only core gameplay loop"
+        ],
+        "allowed_directories": [
+          "src/modules/core/",
+          "src/components/core/",
+          "src/services/core/",
+          "db/core/"
+        ]
+      },
+      "2": {
+        "description": "Visual Enhancement",
+        "features": [
+          "Scene image generation",
+          "Player portrait system",
+          "NPC portrait system", 
+          "Inventory system with item images",
+          "Map system"
+        ],
+        "requires_phase_1_complete": true,
+        "allowed_directories": [
+          "src/modules/visuals/",
+          "src/components/visuals/",
+          "src/services/visuals/",
+          "db/visuals/"
+        ]
+      },
+      "3": {
+        "description": "Advanced Features",
+        "features": [
+          "Ship combat",
+          "Music integration",
+          "Google login", 
+          "Image-to-video generation",
+          "Animated portraits",
+          "Minigames"
+        ],
+        "requires_phase_2_complete": true,
+        "allowed_directories": [
+          "src/modules/advanced/",
+          "src/components/advanced/",
+          "src/services/advanced/",
+          "db/advanced/"
+        ]
+      }
+    }
+  },
+
+  // ==================================================================
+  // Playwright MCP Integration for Testing
+  // ==================================================================
+  "testing": {
+    "playwright": {
+      "enabled": true,
+      "auto_test_on_ui_change": true,
+      "test_scenarios": [
+        "Navigate all scenes",
+        "Click all generated buttons",
+        "Test combat flow",
+        "Test inventory system",
+        "Test character creation"
+      ],
+      "screenshot_on_test": true,
+      "capture_console_errors": true,
+      "log_network_errors": true,
+      "save_test_results": "./test-results/"
+    },
+    "unit_testing": {
+      "require_tests_for_new_files": true,
+      "run_on_save": true,
+      "test_directory": "./tests/"
+    }
+  },
+
+  // ==================================================================
+  // Logging and Error Handling
+  // ==================================================================
+  "logging": {
+    "inspect_iis_logs": true,
+    "report_backend_failures": true,
+    "log_browser_errors": true,
+    "log_error_codes": true,
+    "error_log_path": "./logs/error-logs/",
+    "perf_log_path": "./logs/performance-logs/",
+    "user_log_path": "./logs/user-logs/"
+  },
+
+  // ==================================================================
+  // Image Generation Workflow
+  // ==================================================================
+  "image_workflow": {
+    "check_db_before_generating": true,
+    "save_with_metadata": true,
+    "prompt_variable_based": true,
+    "enforce_db_based_prompts": true,
+    "image_categories": [
+      "scene", "portrait", "item", "ship", "map"
+    ],
+    "default_image_directory": "./assets/images/",
+    "image_db_path": "./db/ImageAssetsDB/"
+  },
+
+  // ==================================================================
+  // UI Rules
+  // ==================================================================
+  "ui": {
+    "phase1": {
+      "allowed_elements": [
+        "text-display",
+        "button-system",
+        "status-bar",
+        "menu"
+      ],
+      "button_system": "left-aligned-expandable-only"
+    },
+    "phase2": {
+      "allowed_elements": [
+        "scene-images",
+        "player-portraits",
+        "npc-portraits",
+        "inventory-system",
+        "map-system"
+      ]
+    },
+    "phase3": {
+      "allowed_elements": [
+        "animation",
+        "video",
+        "music-player",
+        "minigame-container",
+        "advanced-combat-ui"
+      ]
+    },
+    "mobile_first": true,
+    "responsive_breakpoints": [
+      {
+        "name": "mobile",
+        "max_width": 480
+      },
+      {
+        "name": "tablet",
+        "min_width": 481,
+        "max_width": 1024
+      },
+      {
+        "name": "desktop",
+        "min_width": 1025
+      }
+    ]
+  },
+
+  // ==================================================================
+  // Multi-Agent Simulation Rules
+  // ==================================================================
+  "agent_simulation": {
+    "enforce_multiple_agents": true,
+    "agent_roles": [
+      "Storyteller",
+      "Critic",
+      "Combat",
+      "Chaos"
+    ],
+    "reflexion_loops": true,
+    "agent_communication_pattern": "sequential-review",
+    "quality_threshold": 0.8
+  },
+
+  // ==================================================================
+  // Content Preservation Rules
+  // ==================================================================
+  "content_preservation": {
+    "backup_before_changes": true,
+    "preserve_existing_data": true,
+    "versioning_required": true,
+    "backup_directory": "./backups/"
+  },
+
+  // ==================================================================
+  // Git Integration Rules
+  // ==================================================================
+  "git": {
+    "enforce_version_control": true,
+    "minimum_commits_per_day": 3,
+    "require_meaningful_messages": true,
+    "auto_backup_milestones": true,
+    "branch_naming_convention": "phase{#}/feature/{feature-name}",
+    "automated_changelogs": true,
+    "update_docs_on_commit": [
+      "BUGS_PROGRESS.md",
+      "CURSOR_TODO.md"
+    ]
+  },
+
+  // ==================================================================
+  // Error Handling Rules
+  // ==================================================================
+  "error_handling": {
+    "graceful_ui_errors": true,
+    "log_all_errors": true,
+    "user_friendly_messages": true,
+    "network_failure_handling": true,
+    "missing_asset_handling": true,
+    "database_connection_handling": true,
+    "unexpected_behavior_handling": true
+  },
+
+  // ==================================================================
+  // Macros and Automation
+  // ==================================================================
+  "macros": {
+    "bb_check": {
+      "shell": "npm start & sleep 5 && open http://localhost:8080 && browserbase screenshot --url http://localhost:8080 --out screenshots/home.png && browserbase screenshot --url http://localhost:8080/inventory --out screenshots/inventory.png && browserbase diff --baseline baseline/ --current screenshots/"
+    },
+    "create_documentation": {
+      "shell": "node scripts/generate-docs.js"
+    },
+    "db_backup": {
+      "shell": "node scripts/backup-database.js"
+    },
+    "run_all_tests": {
+      "shell": "npm test"
+    }
+  },
+
+  // ==================================================================
+  // File Triggers
+  // ==================================================================
+  "rules": [
+    {
+      "name": "UI changes trigger Browserbase QA",
+      "pattern": "src/components/**/*",
+      "onSave": "runMacro('bb_check')"
+    },
+    {
+      "name": "Enforce max module size",
+      "pattern": "src/**/*.{js,ts,tsx}",
+      "maxLines": 300,
+      "onViolation": "Suggest an AI-led refactor and split the file."
+    },
+    {
+      "name": "Database schema changes require migration",
+      "pattern": "db/schema/**/*.{sql,js,ts}",
+      "onSave": "checkForMigration()"
+    },
+    {
+      "name": "Auto-document API changes",
+      "pattern": "src/services/api/**/*.{js,ts}",
+      "onSave": "updateApiDocs()"
+    },
+    {
+      "name": "Prompt template changes update DB",
+      "pattern": "docs/PROMPT_TEMPLATES.md",
+      "onSave": "syncPromptsToDb()"
+    },
+    {
+      "name": "Auto-log commit & remind to update docs",
+      "onCommit": "appendFile('docs/BUGS_PROGRESS.md', '\n### COMMIT ${new Date().toISOString()}\n- ${commitMessage}') && appendFile('docs/CURSOR_TODO.md', '\n- [ ] Review commit ${commitHash} for follow-up tasks') && checkDocsUpdate()"
+    }
+  ]
+} 

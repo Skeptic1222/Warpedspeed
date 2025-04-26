@@ -1,0 +1,49 @@
+{
+  "version": "2.2",
+  "name": "Warped Speed",
+  "description": "Science fiction text adventure engine using database-driven multi-agent system",
+  "settings": {
+    "autoRun": true,
+    "autoRunAllowList": ["npm start", "npm run dev", "npm test", "npx playwright"],
+    "defaultModel": "openai/gpt-4",
+    "maxContextTokens": 16000,
+    "agentTimeoutMs": 180000
+  },
+  "priorityDocs": [
+    ".cursor/README.md",
+    ".cursor/rules.md",
+    "docs/architecture.md",
+    "docs/database_schema.md",
+    "docs/multiagent_system.md",
+    "docs/action_button_system.md",
+    "docs/phase_plan.md",
+    "docs/api_keys_and_image_generation.md"
+  ],
+  "rules": [
+    {
+      "name": "UI changes trigger Browserbase QA",
+      "pattern": "src/components/**/*",
+      "onSave": "runMacro('bb-check')"
+    },
+    {
+      "name": "Enforce ≤500 LOC per module",
+      "pattern": "src/**/*.{js,ts,tsx}",
+      "maxLines": 500,
+      "onViolation": "Suggest an AI-led refactor and split the file."
+    },
+    {
+      "name": "Prompt-first recommendation",
+      "pattern": "src/**/*.ts",
+      "suggestion": "If you embed >30 lines of story text or HTML, move that logic into a GPT prompt template and keep code minimal."
+    },
+    {
+      "name": "Auto-log commit & remind to update docs",
+      "onCommit": "appendFile('docs/BUGS_PROGRESS.md', '\\n### COMMIT ${new Date().toISOString()}\\n- ${commitMessage}')"
+    }
+  ],
+  "macros": {
+    "bb-check": {
+      "shell": "npm start & sleep 5 && npx browserbase screenshot --url http://localhost:8080 --out screenshots/home.png && npx browserbase screenshot --url http://localhost:8080/inventory --out screenshots/inventory.png && npx browserbase diff --baseline baseline/ --current screenshots/"
+    }
+  }
+} 

@@ -1,0 +1,133 @@
+version: 2.2
+
+# ------------------------------------------------------------------
+#  Project-wide Cursor AI configuration for Warped Speed (Rebuild)
+#  – Autonomous agent mode enabled
+#  – Database-driven architecture
+#  – Prompt-first, doc-driven workflow
+#  – Modular, testable components
+# ------------------------------------------------------------------
+
+context:
+  description: "Warped Speed • Complete rebuild with database-driven architecture"
+  priority_docs:
+    # Always read these before generating or editing code
+    - ../docs/MASTER.md                 # Root-level master instructions
+    - ../docs/ARCHITECTURE.md           # System architecture
+    - ../docs/DATABASE.md               # Database schema and usage
+    - ../docs/API_INTEGRATION.md        # External API integration
+    - ../docs/IMAGES.md                 # Image generation system
+    - ../docs/MECHANICS.md              # Game mechanics
+    - ../docs/PROMPTING.md              # Prompt engineering guidelines
+    - ../docs/BUGS_PROGRESS.md          # Running bug log
+    - ../docs/UI_SPEC.md                # UI/UX specifications
+    - ../docs/DEVELOPMENT_WORKFLOW.md   # Development workflow
+
+macros:
+  # Visual QA macro – screenshots critical pages & diffs
+  bb-check:
+    shell: |
+      npm start &
+      sleep 5
+      open http://localhost:8080
+      browserbase screenshot --url http://localhost:8080 --out screenshots/home.png
+      browserbase screenshot --url http://localhost:8080/inventory --out screenshots/inventory.png
+      browserbase diff --baseline baseline/ --current screenshots/
+
+  # Database schema validation
+  db-validate:
+    shell: |
+      node scripts/validate-db-schema.js
+
+  # Test API connectivity
+  api-test:
+    shell: |
+      node scripts/test-api-connectivity.js
+
+rules:
+  # ----------------------------------------------------------------
+  # 1. UI edits ⇒ run Browserbase snapshot
+  # ----------------------------------------------------------------
+  - name: "UI changes trigger Browserbase QA"
+    pattern: "src/components/**/*.{js,jsx,ts,tsx}"
+    onSave: "runMacro('bb-check')"
+
+  # ----------------------------------------------------------------
+  # 2. Module size guard
+  # ----------------------------------------------------------------
+  - name: "Enforce ≤300 LOC per module"
+    pattern: "src/**/*.{js,ts,jsx,tsx}"
+    maxLines: 300
+    onViolation: |
+      console.log("⚠️ File exceeds 300 lines. Suggest refactoring into smaller modules.");
+      suggestAIReview("This file is getting too large. Consider breaking it into smaller modules.", 
+                       "module-size");
+
+  # ----------------------------------------------------------------
+  # 3. Database operation tracking
+  # ----------------------------------------------------------------
+  - name: "Log database operations"
+    pattern: "src/services/database/**/*.{js,ts}"
+    onSave: "runMacro('db-validate')"
+
+  # ----------------------------------------------------------------
+  # 4. API integration validation
+  # ----------------------------------------------------------------
+  - name: "Validate API integration"
+    pattern: "src/services/api/**/*.{js,ts}"
+    onSave: "runMacro('api-test')"
+
+  # ----------------------------------------------------------------
+  # 5. Documentation consistency
+  # ----------------------------------------------------------------
+  - name: "Keep documentation consistent"
+    onCommit: |
+      const changedFiles = getChangedFiles();
+      if (changedFiles.some(f => f.startsWith('src/'))) {
+        console.log('⚠️ Remember to update relevant documentation in docs/');
+      }
+      if (changedFiles.some(f => f.startsWith('src/database/'))) {
+        console.log('⚠️ Remember to update DATABASE.md with schema changes');
+      }
+
+  # ----------------------------------------------------------------
+  # 6. Prevent hardcoding
+  # ----------------------------------------------------------------
+  - name: "Prevent hardcoding content"
+    pattern: "src/**/*.{js,ts,jsx,tsx}"
+    suggestion: |
+      Avoid hardcoding game content. Use database-driven content or 
+      prompt templates instead. Keep the code logic separate from content.
+
+  # ----------------------------------------------------------------
+  # 7. Image database validation
+  # ----------------------------------------------------------------
+  - name: "Enforce image database lookup before generation"
+    pattern: "src/services/images/**/*.{js,ts}"
+    suggestion: |
+      Ensure image services follow the pattern:
+      1. Search database for existing asset
+      2. Generate only if not found
+      3. Store generated assets back to database
+
+  # ----------------------------------------------------------------
+  # 8. File structure enforcement
+  # ----------------------------------------------------------------
+  - name: "Enforce clean file structure"
+    pattern: "**/*.{js,ts,jsx,tsx}"
+    suggestion: |
+      Follow the project's file structure conventions:
+      - Components in src/components/
+      - Services in src/services/
+      - Database in src/database/
+      - API integration in src/api/
+      - Utilities in src/utils/
+      
+automation:
+  - task: "Database maintenance"
+    schedule: "daily"
+    action: "node scripts/db-maintenance.js"
+
+  - task: "API health check"
+    schedule: "hourly"
+    action: "node scripts/api-health-check.js" 
