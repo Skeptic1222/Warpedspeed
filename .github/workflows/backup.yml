@@ -1,0 +1,36 @@
+name: Automatic Backup
+
+on:
+  schedule:
+    # Run at 00:00 every day
+    - cron: '0 0 * * *'
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for proper backups
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+      
+      - name: Create backup branch
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          BRANCH_NAME="backup-$DATE"
+          git checkout -b $BRANCH_NAME
+          git push -u origin $BRANCH_NAME
+      
+      - name: Create backup tag
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          TAG_NAME="backup-$DATE"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME 

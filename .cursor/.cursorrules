@@ -385,5 +385,19 @@
       "name": "Auto-log commit & remind to update docs",
       "onCommit": "appendFile('docs/BUGS_PROGRESS.md', '\n### COMMIT ${new Date().toISOString()}\n- ${commitMessage}') && appendFile('docs/CURSOR_TODO.md', '\n- [ ] Review commit ${commitHash} for follow-up tasks') && checkDocsUpdate()"
     }
-  ]
+  ],
+
+  // ==================================================================
+  // Automated Backup Rules
+  // ==================================================================
+  "backups": {
+    "automated_git_backups": true,
+    "backup_frequency": "daily",
+    "backup_retention": "30d",
+    "create_backup_branches": true,
+    "create_backup_tags": true,
+    "commit_message_template": "Automated backup: ${new Date().toISOString()}",
+    "notify_on_backup_failure": true,
+    "push_to_remote": true
+  }
 } 

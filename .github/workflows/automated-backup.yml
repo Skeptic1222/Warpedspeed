@@ -1,0 +1,83 @@
+name: Automated Backup System
+
+on:
+  # Run daily at midnight
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # Run after each significant commit to main
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'docs/**'
+      - 'db/**'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Get full history
+      
+      - name: Set up environment
+        run: |
+          echo "BACKUP_DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "BACKUP_TIME=$(date +%H-%M-%S)" >> $GITHUB_ENV
+      
+      - name: Create milestone backup branch
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        run: |
+          git config --global user.name "GitHub Backup System"
+          git config --global user.email "actions@github.com"
+          git checkout -b backup/milestone-${{ env.BACKUP_DATE }}
+          git push -u origin backup/milestone-${{ env.BACKUP_DATE }}
+      
+      - name: Create daily backup tag
+        run: |
+          git tag backup/${{ env.BACKUP_DATE }}_${{ env.BACKUP_TIME }}
+          git push origin backup/${{ env.BACKUP_DATE }}_${{ env.BACKUP_TIME }}
+      
+      - name: Generate backup report
+        run: |
+          mkdir -p .backup-reports
+          echo "# Backup Report: ${{ env.BACKUP_DATE }}" > .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "## Files Included" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "\`\`\`" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          find . -type f -not -path "*/\.*" | sort >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "\`\`\`" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "## Git Status" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "\`\`\`" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          git log -n 10 --pretty=format:"%h - %an, %ar : %s" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          echo "\`\`\`" >> .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+      
+      - name: Commit backup report
+        run: |
+          git add .backup-reports/backup-${{ env.BACKUP_DATE }}.md
+          git commit -m "Backup report for ${{ env.BACKUP_DATE }}"
+          git push
+      
+      - name: Clean up old backups
+        run: |
+          # Get list of branches older than 30 days
+          OLD_BRANCHES=$(git branch -r | grep "origin/backup/milestone-" | sort | head -n -30)
+          for branch in $OLD_BRANCHES; do
+            BRANCH_NAME=${branch#origin/}
+            git push origin --delete $BRANCH_NAME
+          done
+          
+          # Keep only the last 100 backup tags
+          OLD_TAGS=$(git tag -l "backup/*" | sort | head -n -100)
+          for tag in $OLD_TAGS; do
+            git push origin --delete $tag
+          done
+      
+      - name: Notify on completion
+        run: |
+          echo "::notice::Backup completed successfully for ${{ env.BACKUP_DATE }}" 
